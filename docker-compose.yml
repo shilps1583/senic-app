@@ -1,0 +1,12 @@
+senic_app:
+  image: node
+  command:  sh "./run.sh"
+  working_dir: /app
+  expose: 
+  - "5555"
+  ports:
+   - "5555:5555"
+  volumes :
+  - ./:/app
+  environment:
+  - env-config=prod

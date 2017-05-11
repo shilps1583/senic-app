@@ -8,3 +8,8 @@ npm start
 ```
 
 The HomeAssistant API url must be configured in tools/env/base.ts
+
+In order to run the app in docker, use
+```
+docker-compose up
+```
