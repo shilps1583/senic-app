@@ -1,0 +1,88 @@
+.home {
+	margin-top: 1%;
+  margin-left: 1%;
+}
+.brightness{
+  margin-top: -1%;
+  margin-left: 16%;  
+}
+.input-number-field{
+    width: 200px;    
+}
+.input-number{
+  text-align: center;
+  width: 75px;
+  margin-top: -5px;
+}
+button {
+  background-color: #ccc;
+  border-style: none;
+  color: hsla(0,0%,100%,.87);
+  cursor: pointer;
+  display: inline-block;
+  padding: 8px 18px;
+  text-decoration: none;
+}
+
+/* Switch */
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 16px;
+  left: 10%;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #a0d468;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #a0d468;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(14px);
+  -ms-transform: translateX(14px);
+  transform: translateX(14px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+/* Switch End */

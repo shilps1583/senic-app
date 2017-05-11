@@ -1,0 +1,21 @@
+<div class="home">
+  <b>{{device?.name}}</b>
+  <label class="switch">
+    <input id="toggleSwitch" type="checkbox" [checked]="state" [(ngModel)]="state" (click)='toggleState($event)'>
+    <div class="slider round"></div>
+  </label>
+  <div class="home" *ngIf="state">
+    Brightness
+    <div class="brightness">
+        <div class=" input-group input-number-field">
+          <span class="input-group-btn">
+              <button type="button" class="btn btn-secondary" name="decreaseValueBtn" (click)="setBrightness(brightness-1)" [disabled]="!state">-</button>
+          </span>
+          <input type="number" id="fieldInput" class="input-number" min=0 max=255 [(ngModel)]=brightness [disabled]="!state" (blur)="setBrightness(brightness)">
+          <span class="input-group-btn">
+              <button type="button" class="btn btn-secondary" name="increaseValueBtn" (click)="setBrightness(brightness+1)" [disabled]="!state">+</button>
+          </span>
+        </div>
+    </div>    
+  </div>
+</div>
