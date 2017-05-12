@@ -35,7 +35,7 @@ export function main() {
             let mockDeviceService =
               fixture.debugElement.injector.get<any>(DeviceService) as MockDeviceService;
             let deviceServiceSpy = spyOn(mockDeviceService, 'get').and.callThrough();
-
+            let subscriptionSpy = spyOn(mockDeviceService, 'deviceEvents').and.callThrough();
             mockDeviceService.returnValue = {id: 'light.lightbringer', name: 'Lightbringer', state: 'on', brightness: 150};
 
             fixture.detectChanges();
@@ -46,6 +46,7 @@ export function main() {
             expect(homeDOMEl.querySelectorAll('.switch').length).toEqual(1);
             expect(homeDOMEl.querySelectorAll('.brightness').length).toEqual(1);
             expect(deviceServiceSpy.calls.count()).toBe(1);
+            expect(subscriptionSpy.calls.count()).toBe(1);
 
             deviceServiceSpy = spyOn(mockDeviceService, 'turnOff').and.callThrough();
             mockDeviceService.returnValue = {id: 'light.lightbringer', name: 'Lightbringer', state: 'off'};
@@ -72,6 +73,33 @@ export function main() {
             expect(homeDOMEl.querySelectorAll('.brightness').length).toEqual(1);
           });
 
+      }));
+
+    it('should update state on receiving events',
+      async(() => {
+        TestBed
+        .compileComponents()
+        .then(() => {
+          let fixture = TestBed.createComponent(HomeComponent);
+          let homeInstance = fixture.debugElement.componentInstance;
+          let homeDOMEl = fixture.debugElement.nativeElement;
+          let mockDeviceService =
+            fixture.debugElement.injector.get<any>(DeviceService) as MockDeviceService;
+          mockDeviceService.returnValue = {id: 'light.lightbringer', name: 'Lightbringer', state: 'off'};
+          mockDeviceService.deviceEvents = () : Observable<any> => {
+            return Observable.create((observer: any) => {
+              observer.next({id: 'light.lightbringer', name: 'Lightbringer', state: 'on', brightness:15});
+              observer.complete();
+            });
+          };
+          let subscriptionSpy = spyOn(mockDeviceService, 'deviceEvents').and.callThrough();
+          
+          fixture.detectChanges();
+          expect(subscriptionSpy.calls.count()).toBe(1);
+          expect(homeInstance.state).toEqual(true);
+          expect(homeInstance.brightness).toEqual(15);
+          expect(homeDOMEl.querySelectorAll('.brightness').length).toEqual(1);
+        });
       }));
   });
 }
@@ -102,7 +130,6 @@ class MockDeviceService {
   }
 
   deviceEvents(): Observable<any> {
-    return Observable.create((observer: any) => {
-    });
+    return Observable.create((observer: any) => {});
   }
 }
