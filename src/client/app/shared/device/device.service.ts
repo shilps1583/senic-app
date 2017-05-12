@@ -33,6 +33,26 @@ export class DeviceService {
                     .catch(this.handleError);
   }
 
+  deviceEvents(deviceId: string): Observable<any> {
+    return Observable.create((observer: any) => {
+        const eventSource = new EventSource(`${Config.API}api/stream`);
+        eventSource.onmessage = (x:any) => {
+          let event = JSON.parse(x.data);
+          if (event.event_type === 'state_changed' && event.data.entity_id === deviceId) {
+            observer.next({
+              name: event.data.new_state.attributes.friendly_name,
+              state: event.data.new_state.state,
+              brightness: event.data.new_state.attributes.brightness
+            });
+          }
+        };
+        eventSource.onerror = (x:any) => observer.error(x);
+        return () => {
+            eventSource.close();
+        };
+      });
+  }
+
   private mapResponse(json: any, deviceId: string = '') : any {
     let lightDevice;
     if (deviceId !== '') {
@@ -62,5 +82,15 @@ export class DeviceService {
     console.error(errMsg);
     return Observable.throw(errMsg);
   }
+}
+
+interface Callback { (data: any): void; }
+
+declare class EventSource {
+    onmessage: Callback;
+    onerror: Callback;
+    close: () => void;
+    addEventListener(event: string, cb: Callback): void;
+    constructor(name: string);
 }
 

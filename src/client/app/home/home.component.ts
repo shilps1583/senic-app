@@ -1,22 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { DeviceService } from '../shared/device/device.service';
+import { Observable } from 'rxjs/Observable';
 
-/**
- * This class represents the lazy loaded HomeComponent.
- */
 @Component({
   moduleId: module.id,
   selector: 'sd-home',
   templateUrl: 'home.component.html',
   styleUrls: ['home.component.css'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
 
   errorMessage: string;
   device: any = {};
   state: Boolean;
   brightness: number;
-  constructor(public deviceService: DeviceService) {}
+  subscription: any;
+
+  constructor(public deviceService: DeviceService, private ref: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.getDevice();
@@ -29,6 +29,7 @@ export class HomeComponent implements OnInit {
           this.device = device;
           this.state = this.device.state === 'on';
           this.brightness = this.device.brightness;
+          this.subscribeToEvents();
         },
         error => this.errorMessage = <any>error
       );
@@ -76,5 +77,22 @@ export class HomeComponent implements OnInit {
         error => this.errorMessage = <any>error
       );
     }
+  }
+
+  subscribeToEvents() {
+    this.subscription = this.deviceService.deviceEvents(this.device.id).subscribe({
+        next: (device: any) => {
+            this.device.name = device.name;
+            this.device.brightness = this.brightness = device.brightness;
+            this.device.state = device.state;
+            this.state = this.device.state === 'on';
+            this.ref.detectChanges();
+        },
+        error: (err: any) => console.error('something wrong occurred: ' + err)
+    });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

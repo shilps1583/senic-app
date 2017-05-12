@@ -57,7 +57,6 @@ export function main() {
 
             deviceServiceSpy = spyOn(mockDeviceService, 'turnOn').and.callThrough();
             mockDeviceService.returnValue = {id: 'light.lightbringer', name: 'Lightbringer', state: 'on', brightness:150};
-            
             homeInstance.toggleState({target:{checked:true}});
             fixture.detectChanges();
             expect(deviceServiceSpy.calls.count()).toBe(1);
@@ -99,6 +98,11 @@ class MockDeviceService {
     return Observable.create((observer: any) => {
       observer.next(this.returnValue);
       observer.complete();
+    });
+  }
+
+  deviceEvents(): Observable<any> {
+    return Observable.create((observer: any) => {
     });
   }
 }
